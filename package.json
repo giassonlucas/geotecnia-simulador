@@ -1,0 +1,22 @@
+{
+  "name": "geotecnia-simulador-tensoes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Geotecnia — Simulador de Tensões (web + iOS Capacitor)",
+  "scripts": {
+    "ios:add": "cap add ios",
+    "ios:sync": "cap sync ios",
+    "ios:open": "cap open ios",
+    "ios:assets": "capacitor-assets generate --ios",
+    "ios:prepare": "npm run ios:assets && cap sync ios",
+    "test:web": "node --test tests/test_calculation_js.cjs"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/ios": "^8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.0.0"
+  }
+}

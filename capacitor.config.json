@@ -1,0 +1,9 @@
+{
+  "appId": "br.com.geotecnia.simuladortensoes",
+  "appName": "Geotecnia",
+  "webDir": "static",
+  "backgroundColor": "#102b43",
+  "ios": {
+    "contentInset": "automatic"
+  }
+}

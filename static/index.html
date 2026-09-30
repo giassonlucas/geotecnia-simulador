@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#102b43">
+  <title>Geotecnia | Simulador de Tensões</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Geotecnia">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">G</div>
+        <div><div class="brand-name">GEOTECNIA</div><div class="brand-caption">SIMULADOR DE TENSÕES</div></div>
+      </div>
+      <div class="sidebar-heading">CONFIGURAÇÃO</div>
+      <form id="inputs-form">
+        <section class="input-section">
+          <h2>Plano e perfil</h2>
+          <label class="field"><span>Cota do plano do grupo <b>z</b></span><span class="input-wrap"><input name="group_elevation_m" type="text" inputmode="text" value="-4" min="-14" max="-1" required><i>m</i></span></label>
+          <label class="field"><span>Nível d’água <b>NA</b></span><span class="input-wrap"><input name="water_table_elevation_m" type="text" inputmode="text" value="-3" min="-14" max="0" required><i>m</i></span></label>
+          <div class="field-grid two">
+            <label class="field"><span>γ da água</span><span class="input-wrap"><input name="gamma_water_kN_m3" type="text" inputmode="decimal" value="9.81" min="0" required><i>kN/m³</i></span></label>
+            <span class="source-tag">adotado · γ &gt; 0</span>
+          </div>
+          <label class="field"><span>Areia siltosa · γnat</span><span class="input-wrap"><input name="gamma_sand_nat_kN_m3" type="text" inputmode="decimal" value="18.5" min="0" required><i>kN/m³</i></span></label>
+          <label class="field"><span>Areia siltosa · γsat</span><span class="input-wrap"><input name="gamma_sand_sat_kN_m3" type="text" inputmode="decimal" value="19.2" min="0" required><i>kN/m³</i></span></label>
+          <label class="field"><span>Argila mole · γsat</span><span class="input-wrap"><input name="gamma_soft_clay_sat_kN_m3" type="text" inputmode="decimal" value="15.4" min="0" required><i>kN/m³</i></span></label>
+          <label class="field"><span>Argila média · γsat</span><span class="input-wrap"><input name="gamma_medium_clay_sat_kN_m3" type="text" inputmode="decimal" value="19" min="0" required><i>kN/m³</i></span></label>
+          <div class="fixed-profile">Cota: −14 a −1 m · N.A.: −14 a 0 m · plano abaixo da base da escavação.<br>Pesos específicos &gt; 0 · Interfaces fixas: −8 m · −12 m · −14 m</div>
+        </section>
+        <section class="input-section">
+          <h2>Torre</h2>
+          <label class="field"><span>Carga vertical <b>Q</b></span><span class="input-wrap"><input name="tower_load_kN" type="text" inputmode="decimal" value="5000" min="0" required><i>kN</i></span></label>
+          <div class="field-grid two">
+            <label class="field"><span>xT</span><span class="input-wrap"><input name="tower_x_m" type="text" inputmode="text" value="18" required><i>m</i></span></label>
+            <label class="field"><span>yT</span><span class="input-wrap"><input name="tower_y_m" type="text" inputmode="text" value="22" required><i>m</i></span></label>
+          </div>
+          <div class="fixed-profile">Q &gt; 0 · coordenadas reais em metros, sem grade decimal</div>
+        </section>
+        <section class="input-section">
+          <h2>Aterro extenso</h2>
+          <div class="field-grid two">
+            <label class="field"><span>Altura</span><span class="input-wrap"><input name="fill_height_m" type="text" inputmode="decimal" value="3.8" min="0" required><i>m</i></span></label>
+            <label class="field"><span>γ aterro</span><span class="input-wrap"><input name="fill_gamma_kN_m3" type="text" inputmode="decimal" value="16.5" min="0" required><i>kN/m³</i></span></label>
+          </div>
+          <div class="field-grid two">
+            <label class="field"><span>x inicial</span><span class="input-wrap"><input name="fill_x_min_m" type="text" inputmode="text" value="5" required><i>m</i></span></label>
+            <label class="field"><span>x final</span><span class="input-wrap"><input name="fill_x_max_m" type="text" inputmode="text" value="15" required><i>m</i></span></label>
+          </div>
+          <div class="fixed-profile">Altura e γ &gt; 0 · faixa em y infinita; x final &gt; x inicial</div>
+        </section>
+        <section class="input-section">
+          <h2>Escavação e anel</h2>
+          <div class="field-grid two">
+            <label class="field"><span>Centro x</span><span class="input-wrap"><input name="excavation_x_m" type="text" inputmode="text" value="25" required><i>m</i></span></label>
+            <label class="field"><span>Centro y</span><span class="input-wrap"><input name="excavation_y_m" type="text" inputmode="text" value="17" required><i>m</i></span></label>
+          </div>
+          <div class="field-grid two">
+            <label class="field"><span>Diâmetro</span><span class="input-wrap"><input name="excavation_diameter_m" type="text" inputmode="decimal" value="7" min="0" required><i>m</i></span></label>
+            <label class="field"><span>Profundidade</span><span class="input-wrap"><input name="excavation_depth_m" type="text" inputmode="decimal" value="1" min="0" required><i>m</i></span></label>
+          </div>
+          <label class="field"><span>Largura do anel</span><span class="input-wrap"><input name="ring_width_m" type="text" inputmode="decimal" value="1" min="0" required><i>m</i></span></label>
+          <div class="fixed-profile">Dimensões &gt; 0 · plano estritamente abaixo da base da escavação</div>
+        </section>
+        <section class="input-section">
+          <h2>Resolução gráfica</h2>
+          <div class="field-grid two">
+            <label class="field"><span>Passo desejado</span><span class="input-wrap"><input name="grid_step_m" type="text" inputmode="decimal" value="1" min="0.25" max="2.5" required><i>m</i></span></label>
+            <label class="field"><span>Níveis isóbaros</span><span class="input-wrap"><input name="contour_count" type="text" inputmode="decimal" value="12" min="4" max="30" required><i>n</i></span></label>
+          </div>
+          <div class="fixed-profile">Domínio XY: 0–45 m × 0–28 m · passo 0,25–2,5 m · 4–30 contornos inteiros</div>
+        </section>
+        <div class="form-actions">
+          <button id="run-button" class="button primary" type="submit"><span class="button-icon">▶</span> Executar simulação</button>
+          <button id="reset-button" class="button secondary" type="button">Restaurar dados do enunciado</button>
+        </div>
+      </form>
+      <div class="side-foot">Cálculo local · Unidades em kN, m e kPa</div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div><div class="eyebrow">ENGENHARIA GEOTÉCNICA</div><h1>Tensões iniciais & carregamentos</h1><p>Perfil estratificado · Superposição de tensões · Isóbaras no plano do grupo</p></div>
+        <div class="topbar-meta"><span class="status-dot"></span><span id="status-text">Pronto para simular</span><span class="divider"></span><span class="unit-badge">SI</span></div>
+      </header>
+      <div class="notice" id="notice"><span class="notice-icon">i</span><div><b>Modelo conforme as referências fornecidas</b><span>Perfil até −14 m · N.A. em −3 m · plano do grupo em −4 m · faixa de aterro entre x=5 e 15 m.</span></div></div>
+      <div class="error-banner" id="error-banner" role="alert" hidden></div>
+
+      <section id="empty-state" class="empty-state">
+        <div class="empty-graphic"><div class="soil-layer layer-a"></div><div class="soil-layer layer-b"></div><div class="soil-layer layer-c"></div><div class="water-line"></div><div class="tower-shape"></div><div class="load-glow"></div></div>
+        <div class="empty-copy"><span class="eyebrow">SIMULAÇÃO PARAMÉTRICA</span><h2>Calcule o campo de tensões do seu grupo</h2><p>Confira as entradas à esquerda e execute a simulação para gerar o perfil inicial, as contribuições de cada carga e os mapas de distribuição na cota −4 m.</p><button class="button primary" id="empty-run">Executar simulação <span>→</span></button></div>
+      </section>
+
+      <section id="results" hidden>
+        <div class="section-head"><div><span class="eyebrow">RESUMO DO CASO</span><h2>Resultados na cota <span id="plane-label">−4,00</span> m</h2></div><div class="export-actions"><button class="button outline" id="save-simulation">Salvar no aparelho</button><button class="button outline" id="download-csv">↓ CSV da malha</button><button class="button outline" id="download-json">↓ Dados JSON</button><button class="button outline" id="download-pdf">↓ Relatório PDF</button></div></div>
+        <div class="saved-sim-row"><label for="saved-simulations">Simulações neste aparelho</label><select id="saved-simulations"><option value="">Nenhuma selecionada</option></select><button class="button outline" id="load-simulation">Abrir</button><button class="button outline" id="delete-simulation">Excluir</button><span id="saved-sim-status" aria-live="polite"></span></div>
+
+        <div class="metric-grid">
+          <article class="metric-card"><div class="metric-label">TENSÃO TOTAL INICIAL <span>σv</span></div><div class="metric-value" id="metric-sigma">—</div><div class="metric-foot">kPa · antes dos carregamentos</div></article>
+          <article class="metric-card"><div class="metric-label">POROPRESSÃO <span>u</span></div><div class="metric-value" id="metric-u">—</div><div class="metric-foot">kPa · hidrostática</div></article>
+          <article class="metric-card highlight"><div class="metric-label">TENSÃO EFETIVA INICIAL <span>σ′v</span></div><div class="metric-value" id="metric-effective">—</div><div class="metric-foot">kPa · base da normalização</div></article>
+          <article class="metric-card"><div class="metric-label">MÁXIMO Δσv <span>malha XY</span></div><div class="metric-value" id="metric-max">—</div><div class="metric-foot" id="metric-max-at">—</div></article>
+        </div>
+
+        <div class="tabbar" role="tablist"><button class="tab-button active" data-tab="overview">Visão geral</button><button class="tab-button" data-tab="trace">Memória de cálculo</button><button class="tab-button" data-tab="validation">Validação</button></div>
+        <div id="tab-overview" class="tab-panel active">
+          <div class="panel-grid">
+            <article class="panel chart-panel"><div class="panel-head"><div><span class="eyebrow">ESTADO GEOSTÁTICO</span><h3>Tensões iniciais do solo</h3></div><button class="icon-button" data-export-canvas="profile-canvas" title="Baixar imagem do gráfico">↓</button></div><div class="canvas-wrap profile-wrap"><canvas id="profile-canvas" aria-label="Gráfico de tensões iniciais"></canvas><div class="map-tooltip" id="profile-tooltip"></div></div><div class="legend profile-legend"><span><i class="swatch blue"></i>σv total</span><span><i class="swatch orange"></i>u poropressão</span><span><i class="swatch teal"></i>σ′v efetiva</span></div></article>
+            <article class="panel summary-panel"><div class="panel-head"><div><span class="eyebrow">PARÂMETROS ATIVOS</span><h3>Configuração da simulação</h3></div><span class="badge">caso atual</span></div><div id="config-summary" class="config-list"></div><div class="panel-rule"></div><div class="mini-results"><div><span>σ′v inicial</span><b id="mini-effective">—</b></div><div><span>q do aterro</span><b id="mini-fill">—</b></div><div><span>Altura do anel</span><b id="mini-ring">—</b></div></div></article>
+          </div>
+          <div class="panel map-panel"><div class="panel-head"><div><span class="eyebrow">DISTRIBUIÇÃO EM PLANTA · z = <span id="map-elevation">−4,00</span> m</span><h3>Superposição dos carregamentos</h3></div><div class="map-tools"><label>Campo <select id="map-select"><option value="total">Δσv total (kPa)</option><option value="tower">Torre (kPa)</option><option value="fill">Aterro extenso (kPa)</option><option value="excavation">Alívio da escavação (kPa)</option><option value="ring">Aterro anelar (kPa)</option></select></label><button class="icon-button" data-export-canvas="stress-canvas" title="Baixar imagem do mapa">↓</button></div></div><div class="map-layout"><div class="canvas-wrap map-wrap"><canvas id="stress-canvas" aria-label="Mapa de acréscimo de tensão"></canvas><div class="map-tooltip" id="stress-tooltip"></div></div><div class="colorbar"><canvas id="stress-bar"></canvas><div class="bar-labels" id="stress-labels"></div><span id="stress-unit">kPa</span></div></div><div class="map-foot"><span>Arraste para mover · roda do mouse para zoom · passe o cursor para consultar</span><span id="grid-info">—</span></div></div>
+          <div class="panel map-panel"><div class="panel-head"><div><span class="eyebrow">NORMALIZAÇÃO PELA σ′v INICIAL</span><h3>Isóbaras Δσv/σ′v</h3></div><div class="map-tools"><span class="badge ratio-badge">%</span><button class="icon-button" data-export-canvas="ratio-canvas" title="Baixar imagem das isóbaras">↓</button></div></div><div class="map-layout"><div class="canvas-wrap map-wrap"><canvas id="ratio-canvas" aria-label="Mapa das isóbaras normalizadas"></canvas><div class="map-tooltip" id="ratio-tooltip"></div></div><div class="colorbar"><canvas id="ratio-bar"></canvas><div class="bar-labels" id="ratio-labels"></div><span>%</span></div></div><div class="map-foot"><span>Contornos rotulados em porcentagem · valores negativos indicam alívio líquido</span><span id="ratio-extrema">—</span></div></div>
+          <div class="panel table-panel"><div class="panel-head"><div><span class="eyebrow">CONTRIBUIÇÕES NO PONTO CRÍTICO</span><h3>Maiores e menores valores na malha</h3></div></div><div class="table-scroll"><table><thead><tr><th>Ponto</th><th>x (m)</th><th>y (m)</th><th>Torre (kPa)</th><th>Aterro (kPa)</th><th>Escavação (kPa)</th><th>Anel (kPa)</th><th>Total (kPa)</th><th>Δσv/σ′v (%)</th></tr></thead><tbody id="extrema-table"></tbody></table></div></div>
+        </div>
+        <div id="tab-trace" class="tab-panel" hidden><div class="panel trace-panel"><div class="panel-head"><div><span class="eyebrow">RASTREABILIDADE</span><h3>Dados → etapas → resultados</h3></div></div><div id="trace-content"></div></div><div class="panel"><div class="panel-head"><div><span class="eyebrow">HIPÓTESES</span><h3>Condições de validade</h3></div></div><ul id="assumptions-list" class="assumption-list"></ul></div></div>
+        <div id="tab-validation" class="tab-panel" hidden><div class="panel"><div class="panel-head"><div><span class="eyebrow">CHECAGENS INDEPENDENTES</span><h3>Casos de referência matemática</h3></div><span class="badge pass-badge">cálculo verificado</span></div><div class="table-scroll"><table><thead><tr><th>Caso</th><th>Entrada</th><th>Esperado</th><th>Obtido</th><th>Diferença absoluta</th><th>Diferença percentual</th><th>Situação</th></tr></thead><tbody id="validation-table"></tbody></table></div><p class="table-note">Os valores das planilhas dos colegas não são usados como verdade de referência quando divergem do perfil/figuras do professor. O teste da torre usa a solução analítica de Boussinesq; as geometrias distribuídas usam a integração numérica do mesmo núcleo.</p></div></div>
+      </section>
+      <footer class="main-footer"><span>Modelo de tensões verticais · sem verificação de estabilidade ou fator de segurança</span><span>Simulação local</span></footer>
+    </main>
+  </div>
+  <script src="calculation.js" defer></script>
+  <script src="app.js" defer></script>
+  <script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){navigator.serviceWorker.register("sw.js").catch(()=>{});}</script>
+</body>
+</html>
+
+
+
+
+
+
