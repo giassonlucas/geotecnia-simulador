@@ -8,6 +8,10 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import Response
+from fastapi.staticfiles import StaticFiles
+
 from calculation.model import DEFAULTS, simulate
 from reporting import make_pdf_report
 
@@ -17,6 +21,72 @@ STATIC = ROOT / "static"
 HOST = os.environ.get("HOST", "127.0.0.1")
 PORT = int(os.environ.get("PORT", "8501"))
 MAX_REQUEST_BYTES = 12_000_000
+
+
+# Vercel's Python runtime imports this ASGI application as its serverless entrypoint.
+# The local development server below continues to use SimulatorHandler.
+app = FastAPI(title="Geotecnia — Simulador de Tensões")
+
+
+async def _request_payload(request: Request) -> dict:
+    try:
+        length = int(request.headers.get("content-length", "0"))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="Cabeçalho Content-Length inválido.") from exc
+    if length <= 0 or length > MAX_REQUEST_BYTES:
+        raise HTTPException(status_code=413, detail="Corpo da requisição vazio ou grande demais.")
+    body = await request.body()
+    if len(body) > MAX_REQUEST_BYTES:
+        raise HTTPException(status_code=413, detail="Corpo da requisição vazio ou grande demais.")
+    try:
+        payload = json.loads(body.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise HTTPException(status_code=400, detail="Não foi possível ler os dados enviados.") from exc
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Os dados precisam ser enviados como objeto JSON.")
+    return payload
+
+
+@app.get("/api/health")
+async def vercel_health() -> dict:
+    return {"status": "ok", "defaults": DEFAULTS}
+
+
+@app.post("/api/simulate")
+async def vercel_simulate(request: Request) -> dict:
+    payload = await _request_payload(request)
+    try:
+        return simulate(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except Exception as exc:
+        print(f"ERRO: Falha de cálculo: {exc!r}")
+        raise HTTPException(status_code=500, detail="Falha durante o cálculo. Revise os dados e tente novamente.") from exc
+
+
+@app.post("/api/report")
+async def vercel_report(request: Request) -> Response:
+    payload = await _request_payload(request)
+    result = payload.get("result")
+    if not isinstance(result, dict):
+        raise HTTPException(status_code=400, detail="O resultado da simulação não foi enviado.")
+    try:
+        pdf = make_pdf_report(result)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=501, detail=str(exc)) from exc
+    except Exception as exc:
+        print(f"ERRO: Falha ao gerar o relatório: {exc!r}")
+        raise HTTPException(status_code=500, detail="Falha ao gerar o relatório PDF.") from exc
+    return Response(
+        content=pdf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="relatorio_geotecnia.pdf"'},
+    )
+
+
+# Keep this mount after API routes so they are matched first; it serves the web UI
+# and its static assets from the same-origin Vercel function.
+app.mount("/", StaticFiles(directory=STATIC, html=True), name="static")
 
 
 class SimulatorHandler(BaseHTTPRequestHandler):

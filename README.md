@@ -94,3 +94,7 @@ Os materiais não definem critério de ruptura, estabilidade, recalque ou fator 
 Configuração de Capacitor para encapsular os mesmos arquivos `static/`, com cálculo local/offline, armazenamento local e exportações. Consulte [COMO_INSTALAR_NO_IPHONE.md](COMO_INSTALAR_NO_IPHONE.md) para gerar o projeto iOS, configurar assinatura e usar o workflow GitHub Actions/TestFlight. O build iOS não foi executado neste ambiente Windows sem Xcode e credenciais Apple.
 
 Testes JS do motor: `npm run test:web`. Testes Python: `python -m unittest discover -s tests -v`.
+
+## Implantação no Vercel
+
+O projeto exporta a aplicação ASGI `app` de `app.py`, que o runtime Python do Vercel usa como entrypoint. Importe este repositório no Vercel, mantenha a pasta raiz como diretório do projeto e deixe a detecção do Python automática; as dependências são instaladas a partir de `requirements.txt`. A aplicação FastAPI serve a interface em `/`, disponibiliza `/api/health` e `/api/simulate`, e gera o PDF em `/api/report`. O servidor `python app.py` continua sendo o modo local e o `render.yaml` continua configurando o Render.
